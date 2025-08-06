@@ -121,7 +121,7 @@ st.markdown("""
     .glass-card {
         background: #1a1a1a;
         border-radius: 12px;
-        
+        border: 1px solid rgba(255, 215, 0, 0.3);
         padding: 15px;
         margin: 10px 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
