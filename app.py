@@ -318,7 +318,7 @@ st.markdown("""
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
         }
         50% {
-            transform: scale(1.03);
+            transform: scale(1.5);
             filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
         }
     }
