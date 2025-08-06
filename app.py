@@ -549,7 +549,7 @@ with col1:
     if not df_propostas.empty:
         tabela_html = f"""
         <div class="glass-card fade-in-up" style="border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; overflow: hidden; margin: 10px 0;">
-            <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 1.5rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
+            <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 2rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
                 Propostas Diárias
             </h3>
             <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; background: #1a1a1a; border-radius: 8px; overflow: hidden;">
@@ -592,7 +592,7 @@ with col1:
 
             tabela_html += f"""
             <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.2); background: #2a2a2a;">
-                <td style="font-size: 0.9rem; background: #000000; padding: 6px 10px; color: #FFF; vertical-align: middle; text-align: left; text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);">
+                <td style="font-size: 1.5rem; background: #000000; padding: 6px 10px; color: #FFF; vertical-align: middle; text-align: left; text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);">
                     {nome} {medalha_html}
                 </td>
                 <td style="padding: 6px 10px; background: #1A1A1A; color: #FFD700; vertical-align: middle; text-align: center; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);">
