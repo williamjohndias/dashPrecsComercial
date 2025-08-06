@@ -1,7 +1,7 @@
 # 🚀 Dashboard PRECS - Deploy Streamlit Cloud
 
 ## 📊 Descrição
-Dashboard interativo para visualização de propostas e campanhas da PRECS, com tema escuro elegante e barras de progresso contornadas.
+Dashboard interativo para visualização de propostas e campanhas da PRECS.
 
 ## 🎯 Funcionalidades
 - **Visualização em tempo real** das propostas diárias
