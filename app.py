@@ -23,7 +23,11 @@ st.session_state.page_height = 900  # ou use st.window_height, futuramente
 #         pass
 
 # ---- Tela cheia + tema escuro da PRECS ----
-st.set_page_config(page_title="Precs Propostas", layout="wide")
+st.set_page_config(
+    page_title="Precs Propostas", 
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
 # Estilo elegante com tema escuro e dourado
 st.markdown("""
@@ -318,7 +322,7 @@ st.markdown("""
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
         }
         50% {
-            transform: scale(1.5);
+            transform: scale(1.03);
             filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
         }
     }
@@ -355,6 +359,212 @@ st.markdown("""
     .glow:hover {
         box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
     }
+    
+    /* Esconder botão "Manage app" do Streamlit Cloud */
+    .stDeployButton {
+        display: none !important;
+    }
+    
+    /* Esconder outros elementos do Streamlit Cloud */
+    [data-testid="stDeployButton"] {
+        display: none !important;
+    }
+    
+    /* Sidebar elegante e oculta por padrão */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
+        color: white !important;
+        border-right: 2px solid #FFD700 !important;
+        min-width: 280px !important;
+        max-width: 350px !important;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    /* Estilizar elementos da sidebar */
+    .css-1v0mbdj .stSelectbox > div > div {
+        background: rgba(42, 42, 42, 0.9) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 215, 0, 0.4) !important;
+        border-radius: 8px !important;
+        backdrop-filter: blur(5px) !important;
+    }
+    
+    .css-1v0mbdj .stMultiSelect > div > div {
+        background: rgba(42, 42, 42, 0.9) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 215, 0, 0.4) !important;
+        border-radius: 8px !important;
+        backdrop-filter: blur(5px) !important;
+    }
+    
+    .css-1v0mbdj .stDateInput > div > div {
+        background: rgba(42, 42, 42, 0.9) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 215, 0, 0.4) !important;
+        border-radius: 8px !important;
+        backdrop-filter: blur(5px) !important;
+    }
+    
+    /* Estilizar checkbox da sidebar */
+    .css-1v0mbdj .stCheckbox > div {
+        background: rgba(42, 42, 42, 0.9) !important;
+        color: white !important;
+        border-radius: 8px !important;
+        padding: 8px !important;
+        margin: 4px 0 !important;
+    }
+    
+    /* Estilizar headers da sidebar */
+    .css-1v0mbdj h1, .css-1v0mbdj h2, .css-1v0mbdj h3 {
+        background: linear-gradient(45deg, #FFD700, #FFA500) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.3) !important;
+        margin-bottom: 15px !important;
+    }
+    
+    /* Hover effects para elementos da sidebar */
+    .css-1v0mbdj .stSelectbox > div > div:hover,
+    .css-1v0mbdj .stMultiSelect > div > div:hover,
+    .css-1v0mbdj .stDateInput > div > div:hover {
+        border-color: rgba(255, 215, 0, 0.8) !important;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.3) !important;
+        transform: translateY(-1px) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Ajustar layout quando sidebar está oculta */
+    .main .block-container {
+        padding-left: 1rem !important;
+        max-width: 100% !important;
+    }
+    
+    /* Quando sidebar está oculta, expandir conteúdo */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .block-container {
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Sidebar oculta por padrão, mas elegante quando visível */
+    [data-testid="stSidebar"] {
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Ocultar menu hambúrguer se existir */
+    .css-1d391kg {
+        display: none !important;
+    }
+    
+    /* Permitir comportamento normal da sidebar */
+    [data-testid="stSidebar"] {
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Sidebar com comportamento dinâmico */
+    section[data-testid="stSidebar"] {
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Permitir que a sidebar seja dinâmica */
+    .css-1v0mbdj {
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Sidebar dinâmica - aparece e desaparece normalmente */
+    [data-testid="stSidebar"] {
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Ajustar colunas quando sidebar oculta */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .stColumns {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    
+    /* Correção mais robusta para eliminar espaço vazio */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Forçar layout full-width quando sidebar oculta */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .block-container {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Ajustar colunas para ocupar toda largura quando sidebar oculta */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .stColumns {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Ajustar colunas individuais quando sidebar oculta */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .stColumns > div {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Forçar container principal a ocupar toda largura */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+    
+    /* CSS mais agressivo para eliminar espaço vazio */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+        position: relative !important;
+    }
+    
+    /* Forçar layout responsivo */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .block-container {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Ajustar colunas específicas */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .stColumns {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Ajustar colunas individuais */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main .stColumns > div {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Forçar container principal */
+    [data-testid="stSidebar"][aria-expanded="false"] ~ .main {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -376,7 +586,7 @@ def formatar_data_pt_br():
     """Formata a data atual em português brasileiro sem depender de locale"""
     from datetime import datetime
     hoje = datetime.now()
-
+    
     # Mapeamento de dias da semana
     dias_semana = {
         0: "Segunda-feira",
@@ -387,28 +597,37 @@ def formatar_data_pt_br():
         5: "Sábado",
         6: "Domingo"
     }
-
+    
     # Mapeamento de meses
     meses = {
         1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril",
         5: "Maio", 6: "Junho", 7: "Julho", 8: "Agosto",
         9: "Setembro", 10: "Outubro", 11: "Novembro", 12: "Dezembro"
     }
-
+    
     dia_semana = dias_semana[hoje.weekday()]
     dia = hoje.day
     mes = meses[hoje.month]
     ano = hoje.year
-
+    
     return f"{dia_semana} - {dia:02d}/{hoje.month:02d}/{ano}"
 
-# ---- Carrega variáveis do .env ----
-load_dotenv()
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+# ---- Carrega variáveis do .env ou Streamlit Secrets ----
+try:
+    # Tentar carregar do .env (desenvolvimento local)
+    load_dotenv()
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
+    DB_NAME = os.getenv("DB_NAME")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+except:
+    # Usar Streamlit Secrets (produção)
+    DB_HOST = st.secrets["DB_HOST"]
+    DB_PORT = st.secrets["DB_PORT"]
+    DB_NAME = st.secrets["DB_NAME"]
+    DB_USER = st.secrets["DB_USER"]
+    DB_PASSWORD = st.secrets["DB_PASSWORD"]
 
 # ---- Conectar ao PostgreSQL ----
 def get_connection():
@@ -479,7 +698,7 @@ def contar_propostas(df, df_original):
     # Garante todos os proprietários no resultado final
     df_adquiridas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_adquiridas, on='proprietario', how='left').fillna(0)
-
+    
     df_apresentadas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_apresentadas, on='proprietario', how='left').fillna(0)
 
@@ -501,16 +720,16 @@ df_campanhas = carregar_dados_campanhas()
 with st.sidebar:
     st.header("Filtros")
     mostrar_gestao = st.checkbox("Mostrar proprietário 'Gestão'", value=False)
-
+    
     proprietarios_disponiveis = df["proprietario"].unique().tolist()
     if not mostrar_gestao:
         proprietarios_disponiveis = [p for p in proprietarios_disponiveis if p != "Gestão"]
-
+    
     proprietarios = st.multiselect("Proprietário", options=proprietarios_disponiveis, default=proprietarios_disponiveis)
     etapas = st.multiselect("Etapa", df["id_etapa"].unique(), default=df["id_etapa"].unique())
     data_ini = st.date_input("Data inicial", df["data"].max().date())
     data_fim = st.date_input("Data final", df["data"].max().date())
-
+    
     campanhas_disponiveis = df_campanhas["nome_campanha"].tolist()
     campanhas_selecionadas = st.multiselect(
         "Campanhas",
@@ -549,20 +768,79 @@ with col1:
     if not df_propostas.empty:
         tabela_html = f"""
         <div class="glass-card fade-in-up" style="border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; overflow: hidden; margin: 10px 0;">
-            <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 2rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
-            <h2 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 2rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
+            <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 1.5rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
                 Propostas Diárias
             </h3>
-            </h2>
             <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; background: #1a1a1a; border-radius: 8px; overflow: hidden;">
             <thead>
                 <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.3); background: #000000;">
-@@ -621,33 +621,33 @@
+                    <th style="font-size: 1rem; text-align: left; background: #000000; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Nome</th>
+                    <th style="font-size: 1rem; text-align: center; background: #1A1A1A; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Adquiridas: {int(total_adquiridas)}/90</th>
+                    <th style="font-size: 1rem; text-align: center; background: #333333; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Apresentadas: {int(total_apresentadas)}/90</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
+
+        maximo = 6
+        for _, row in df_propostas.iterrows():
+            nome = row['proprietario']
+            valor1 = int(row['quantidade_adquiridas'])
+            valor2 = int(row['quantidade_apresentadas'])
+            medalha_html = f"""<img src="data:image/png;base64,{medalha_b64}" width="18" style="margin-left: 6px; vertical-align: middle;">""" \
+                if valor1 >= 6 or valor2 >= 6 else ""
+            
+            proporcao1 = min(valor1 / maximo, 1.0)
+            proporcao2 = min(valor2 / maximo, 1.0)
+            cor_barra1 = get_cor_barra(valor1)
+            cor_barra2 = get_cor_barra(valor2)
+
+            barra1 = f"""
+            <div class="progress-bar" style='width: 100%; height: 12px; margin-bottom: 4px; border: 2px solid #FFD700;'>
+                <div class="progress-fill" style='width: {proporcao1*100:.1f}%; {cor_barra1} height: 100%; border: 1px solid rgba(255, 215, 0, 0.6);'></div>
+            </div>
+            <span style='font-size: 0.8rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor1}/{maximo}</span>
+            """
+
+            barra2 = f"""
+            <div class="progress-bar" style='width: 100%; height: 12px; margin-bottom: 4px; border: 2px solid #FFD700;'>
+                <div class="progress-fill" style='width: {proporcao2*100:.1f}%; {cor_barra2} height: 100%; border: 1px solid rgba(255, 215, 0, 0.6);'></div>
+            </div>
+            <span style='font-size: 0.8rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor2}/{maximo}</span>
+            """
+
+            tabela_html += f"""
+            <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.2); background: #2a2a2a;">
+                <td style="font-size: 0.9rem; background: #000000; padding: 6px 10px; color: #FFF; vertical-align: middle; text-align: left; text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);">
+                    {nome} {medalha_html}
+                </td>
+                <td style="padding: 6px 10px; background: #1A1A1A; color: #FFD700; vertical-align: middle; text-align: center; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);">
+                    {barra1}
+                </td>
+                <td style="padding: 6px 10px; background: #333333; color: #FFD700; vertical-align: middle; text-align: center; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);">
+                    {barra2}
+                </td>
+            </tr>
+            """
+
+        tabela_html += "</tbody></table></div>"
+        components.html(tabela_html, height=1000, scrolling=False)
+
+
+with col2:
+    logo_b64 = image_to_base64("precs2.png")
+    sino_b64 = image_to_base64("sino.png")  # Seu arquivo de sino
+    
+    st.markdown(f"""
+        <div class="glass-card slide-in-left" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 20px;"> 
+            <img src="data:image/png;base64,{logo_b64}" width="200" style="border-radius: 12px; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2); filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3));">
+        </div> 
+    """, unsafe_allow_html=True)
+    
     # Cabeçalho com logo e título
     st.markdown(f"""
         <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 15px;">
             <h1 style="background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 2rem; margin: 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);">Precs Propostas</h1> 
-            <h1 style="background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 2.5rem; margin: 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);">Precs Propostas</h1> 
         </div>
         <div class="glass-card fade-in-up" style="text-align: center; margin-bottom: 15px;">
             <h3 style='background: linear-gradient(45deg, #C5A45A, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1rem; font-weight: bold; text-shadow: 0 0 8px rgba(197, 164, 90, 0.3);'>
