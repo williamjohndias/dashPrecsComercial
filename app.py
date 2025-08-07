@@ -11,11 +11,19 @@ from PIL import Image
 import plotly.express as px
 import streamlit.components.v1 as components
 from datetime import datetime
-
-st.session_state.page_height = 900
+st.session_state.page_height = 900  # ou use st.window_height, futuramente
+# Configuração de locale removida para compatibilidade com Streamlit Cloud
+# import locale
+# try:
+#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+# except (locale.Error, OSError):
+#     try:
+#         locale.setlocale(locale.LC_TIME, 'pt_BR')
+#     except (locale.Error, OSError):
+#         pass
 
 # ---- Tela cheia + tema escuro da PRECS ----
-st.set_page_config(page_title="Precs Propostas", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Precs Propostas", layout="wide")
 
 # Estilo elegante com tema escuro e dourado
 st.markdown("""
@@ -28,27 +36,28 @@ st.markdown("""
     }
     
     /* Esconder header do Streamlit */
-    header[data-testid="stHeader"] {
+    header {
         visibility: hidden;
-        height: 0;
     }
     
-    /* Esconder menu do Streamlit */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    
     /* Fundo escuro elegante */
-    .stApp {
+    body {
         background: #0a0a0a !important;
         color: white;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
     }
     
     /* Container principal */
-    .main .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
-        max-width: 100% !important;
+    .main {
+        background: #0a0a0a !important;
+        padding: 0;
+    }
+    
+    .stApp {
+        background: #0a0a0a !important;
+        padding: 1rem;
+        max-width: 100%;
     }
     
     /* Títulos com gradiente dourado */
@@ -79,6 +88,35 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
     }
     
+    /* Container principal */
+    .block-container {
+        background: #1a1a1a;
+        border-radius: 15px;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        padding: 1.5rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Sidebar estilizada */
+    .css-1v0mbdj {
+        background: #1a1a1a !important;
+        color: white;
+        border-right: 2px solid #FFD700;
+    }
+    
+    .css-1d391kg {
+        background: #1a1a1a !important;
+    }
+    
+    /* DataFrames */
+    .stDataFrame {
+        background: rgba(26, 26, 26, 0.9);
+        color: white;
+        border-radius: 15px;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    
     /* Cards simples */
     .glass-card {
         background: #1a1a1a;
@@ -87,13 +125,6 @@ st.markdown("""
         padding: 15px;
         margin: 10px 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* Sidebar estilizada */
-    .css-1d391kg, .css-1v0mbdj {
-        background: #1a1a1a !important;
-        color: white !important;
-        border-right: 2px solid #FFD700 !important;
     }
     
     /* Animações suaves */
@@ -127,69 +158,6 @@ st.markdown("""
         animation: slideInLeft 0.8s ease-out;
     }
     
-    /* Animação de pulse para o sino */
-    @keyframes pulse {
-        0%, 100% {
-            transform: scale(1);
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
-        }
-        50% {
-            transform: scale(1.03);
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-        }
-    }
-    
-    /* Barras de progresso contornadas */
-    .progress-bar {
-        background: #2C2C2C;
-        border-radius: 6px;
-        border: 2px solid #FFD700;
-        overflow: hidden;
-        position: relative;
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-        margin: 2px;
-        height: 16px;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        border-radius: 4px;
-        transition: width 0.8s ease;
-        position: relative;
-        border: 1px solid rgba(255, 215, 0, 0.5);
-    }
-    
-    /* Tabela responsiva */
-    .tabela-container {
-        width: 100%;
-        max-height: 85vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-    
-    .tabela-container table {
-        width: 100%;
-        font-size: 1rem;
-        border-collapse: collapse;
-    }
-    
-    .tabela-container th {
-        font-size: 1.2rem !important;
-        padding: 15px 20px !important;
-    }
-    
-    .tabela-container td {
-        font-size: 1rem !important;
-        padding: 15px 20px !important;
-        min-height: 70px;
-        vertical-align: middle;
-    }
-    
-    .progress-bar {
-        height: 18px !important;
-        margin-bottom: 8px !important;
-    }
-    
     /* Scrollbar personalizada */
     ::-webkit-scrollbar {
         width: 8px;
@@ -209,49 +177,174 @@ st.markdown("""
         background: linear-gradient(45deg, #FFA500, #FFD700);
     }
     
-    /* Responsividade */
-    @media screen and (max-width: 1200px) {
-        .tabela-container table {
-            font-size: 0.9rem;
+    /* Responsividade otimizada para 100% de escala */
+    @media screen and (min-width: 1400px) {
+        .stApp {
+            padding: 1.5rem;
         }
         
-        .tabela-container th {
-            font-size: 1.1rem !important;
-            padding: 12px 18px !important;
+        .block-container {
+            padding: 2rem;
         }
         
-        .tabela-container td {
+        .glass-card {
+            padding: 20px;
+        }
+        
+        h1 { font-size: 2.5rem !important; }
+        h2 { font-size: 2rem !important; }
+        h3 { font-size: 1.8rem !important; }
+        h4 { font-size: 1.3rem !important; }
+        
+        table {
             font-size: 0.9rem !important;
-            padding: 12px 18px !important;
         }
         
-        .progress-bar {
-            height: 18px !important;
+        .stButton>button {
+            font-size: 0.9rem !important;
+            padding: 10px 20px !important;
         }
-        
-        h1 { font-size: 1.8rem !important; }
-        h2 { font-size: 1.4rem !important; }
-        h3 { font-size: 1.2rem !important; }
     }
     
-    @media screen and (min-width: 1400px) {
-        .tabela-container table {
-            font-size: 1.1rem;
+    @media screen and (min-width: 1200px) and (max-width: 1399px) {
+        .stApp {
+            padding: 1rem;
         }
         
-        .tabela-container th {
-            font-size: 1.4rem !important;
-            padding: 20px 30px !important;
+        .block-container {
+            padding: 1.5rem;
         }
         
-        .tabela-container td {
-            font-size: 1.1rem !important;
-            padding: 20px 30px !important;
+        .glass-card {
+            padding: 18px;
         }
         
+        h1 { font-size: 2.2rem !important; }
+        h2 { font-size: 1.8rem !important; }
+        h3 { font-size: 1.5rem !important; }
+        h4 { font-size: 1.1rem !important; }
+        
+        table {
+            font-size: 0.85rem !important;
+        }
+        
+        .stButton>button {
+            font-size: 0.85rem !important;
+            padding: 8px 16px !important;
+        }
+    }
+    
+    @media screen and (max-width: 1199px) {
+        .stApp {
+            padding: 0.8rem;
+        }
+        
+        .block-container {
+            padding: 1.2rem;
+        }
+        
+        .glass-card {
+            padding: 15px;
+        }
+        
+        h1 { font-size: 2rem !important; }
+        h2 { font-size: 1.6rem !important; }
+        h3 { font-size: 1.3rem !important; }
+        h4 { font-size: 1rem !important; }
+        
+        table {
+            font-size: 0.8rem !important;
+        }
+        
+        .stButton>button {
+            font-size: 0.8rem !important;
+            padding: 8px 14px !important;
+        }
+    }
+    
+    /* Ajustes específicos para 100% de escala */
+    @media screen and (min-width: 1000px) {
+        .stColumns {
+            gap: 1rem !important;
+        }
+        
+        .glass-card {
+            margin: 8px 0 !important;
+        }
+        
+        /* Reduzir tamanho das imagens */
+        img {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        
+        /* Ajustar altura da tabela */
+        .tabela-container {
+            max-height: 70vh !important;
+            overflow-y: auto !important;
+        }
+        
+        /* Otimizar espaçamentos */
+        .block-container {
+            margin: 0.5rem 0 !important;
+        }
+        
+        /* Reduzir padding dos cards */
+        .glass-card {
+            padding: 15px !important;
+        }
+        
+        /* Ajustar tamanho das fontes */
+        h1 { font-size: 2rem !important; }
+        h2 { font-size: 1.6rem !important; }
+        h3 { font-size: 1.4rem !important; }
+        h4 { font-size: 1.1rem !important; }
+        
+        /* Otimizar tabela */
+        table {
+            font-size: 0.85rem !important;
+        }
+        
+        /* Reduzir altura das barras de progresso */
         .progress-bar {
-            height: 24px !important;
+            height: 14px !important;
         }
+    }
+    
+    /* Animação de pulse para o sino */
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
+        }
+        50% {
+            transform: scale(1.5);
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+        }
+    }
+    
+    /* Barras de progresso contornadas */
+    .progress-bar {
+        background: #2C2C2C;
+        border-radius: 6px;
+        border: 2px solid #FFD700;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        margin: 2px;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.8s ease;
+        position: relative;
+        border: 1px solid rgba(255, 215, 0, 0.5);
+    }
+    
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
     }
     
     /* Efeitos de brilho sutis */
@@ -265,25 +358,25 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ---- Autoatualização (a cada 70 segundos) ----
+
+
+# ---- Autoatualização (a cada 10 segundos) ----
 st_autorefresh(interval=70 * 1000, key="atualizacao")
 
 print(f"Página atualizada em: {datetime.now().strftime('%H:%M:%S')}")
 
 def image_to_base64(image_path):
-    try:
-        img = Image.open(image_path)
-        buffered = BytesIO()
-        img.save(buffered, format="PNG")
-        img_b64 = base64.b64encode(buffered.getvalue()).decode()
-        return img_b64
-    except FileNotFoundError:
-        return ""
+    img = Image.open(image_path)
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_b64 = base64.b64encode(buffered.getvalue()).decode()
+    return img_b64
 
 def formatar_data_pt_br():
     """Formata a data atual em português brasileiro sem depender de locale"""
+    from datetime import datetime
     hoje = datetime.now()
-    
+
     # Mapeamento de dias da semana
     dias_semana = {
         0: "Segunda-feira",
@@ -294,19 +387,19 @@ def formatar_data_pt_br():
         5: "Sábado",
         6: "Domingo"
     }
-    
+
     # Mapeamento de meses
     meses = {
         1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril",
         5: "Maio", 6: "Junho", 7: "Julho", 8: "Agosto",
         9: "Setembro", 10: "Outubro", 11: "Novembro", 12: "Dezembro"
     }
-    
+
     dia_semana = dias_semana[hoje.weekday()]
     dia = hoje.day
     mes = meses[hoje.month]
     ano = hoje.year
-    
+
     return f"{dia_semana} - {dia:02d}/{hoje.month:02d}/{ano}"
 
 # ---- Carrega variáveis do .env ----
@@ -331,31 +424,23 @@ def get_connection():
 # ---- Carregar dados ----
 @st.cache_data(ttl=10)
 def carregar_dados_propostas():
-    try:
-        conn = get_connection()
-        df = pd.read_sql("SELECT * FROM dashmetas", conn)
-        df["data"] = pd.to_datetime(df["data"])
-        conn.close()
-        return df
-    except Exception as e:
-        st.error(f"Erro ao carregar dados de propostas: {e}")
-        return pd.DataFrame()
+    conn = get_connection()
+    df = pd.read_sql("SELECT * FROM dashmetas", conn)
+    df["data"] = pd.to_datetime(df["data"])
+    conn.close()
+    return df
 
 @st.cache_data(ttl=10)
 def carregar_dados_campanhas():
-    try:
-        conn = get_connection()
-        df = pd.read_sql("SELECT * FROM campanhas", conn)
-        conn.close()
-        return df
-    except Exception as e:
-        st.error(f"Erro ao carregar dados de campanhas: {e}")
-        return pd.DataFrame()
+    conn = get_connection()
+    df = pd.read_sql("SELECT * FROM campanhas", conn)
+    conn.close()
+    return df
 
 def atualizar_status_campanhas(campanhas_selecionadas):
+    conn = get_connection()
+    cur = conn.cursor()
     try:
-        conn = get_connection()
-        cur = conn.cursor()
         cur.execute("UPDATE campanhas SET status_campanha = FALSE")
         for campanha in campanhas_selecionadas:
             cur.execute(
@@ -363,15 +448,13 @@ def atualizar_status_campanhas(campanhas_selecionadas):
                 (campanha,)
             )
         conn.commit()
-        cur.close()
-        conn.close()
     except Exception as e:
         st.error(f"Erro ao atualizar status das campanhas: {e}")
+    finally:
+        cur.close()
+        conn.close()
 
 def contar_propostas(df, df_original):
-    if df.empty:
-        return pd.DataFrame(columns=['proprietario', 'quantidade_adquiridas', 'quantidade_apresentadas'])
-    
     # Garante que a coluna 'data' é datetime
     df['data'] = pd.to_datetime(df['data'])
 
@@ -381,21 +464,22 @@ def contar_propostas(df, df_original):
     # Mantém a última vez que cada negócio passou por cada etapa
     df_ultimos = df_sorted.drop_duplicates(subset=['id_negocio', 'id_etapa'], keep='first')
 
-    # Lista de todos os proprietários
-    all_proprietarios = df_original['proprietario'].unique() if not df_original.empty else []
 
-    # Contagem de negócios que passaram pela etapa 'Cálculo'
+    # Lista de todos os proprietários (caso queira usar depois)
+    all_proprietarios = df_original['proprietario'].unique()
+
+    # Contagem de negócios que passaram pela etapa 'Cálculo' (última vez de cada um)
     df_adquiridas = df_ultimos[df_ultimos['id_etapa'] == 'Cálculo'] \
         .groupby('proprietario').agg(quantidade_adquiridas=('id_negocio', 'nunique')).reset_index()
 
-    # Contagem de negócios que passaram pela etapa 'Negociações iniciadas'
+    # Contagem de negócios que passaram pela etapa 'Negociações iniciadas' (última vez de cada um)
     df_apresentadas = df_ultimos[df_ultimos['id_etapa'] == 'Negociações iniciadas'] \
         .groupby('proprietario').agg(quantidade_apresentadas=('id_negocio', 'nunique')).reset_index()
 
     # Garante todos os proprietários no resultado final
     df_adquiridas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_adquiridas, on='proprietario', how='left').fillna(0)
-    
+
     df_apresentadas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_apresentadas, on='proprietario', how='left').fillna(0)
 
@@ -407,7 +491,8 @@ def get_cor_barra(valor, maximo=6):
         return "background: linear-gradient(45deg, #FFD700, #FFA500); box-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.2);"
     return "background: linear-gradient(45deg, #c3a43e, #d4af37); box-shadow: 0 0 5px rgba(195, 164, 62, 0.4);"
 
-# Carregar dados
+
+
 df_original = carregar_dados_propostas()
 df = df_original.copy()
 df_campanhas = carregar_dados_campanhas()
@@ -416,154 +501,125 @@ df_campanhas = carregar_dados_campanhas()
 with st.sidebar:
     st.header("Filtros")
     mostrar_gestao = st.checkbox("Mostrar proprietário 'Gestão'", value=False)
-    
-    if not df.empty:
-        proprietarios_disponiveis = df["proprietario"].unique().tolist()
-        if not mostrar_gestao:
-            proprietarios_disponiveis = [p for p in proprietarios_disponiveis if p != "Gestão"]
-        
-        proprietarios = st.multiselect("Proprietário", options=proprietarios_disponiveis, default=proprietarios_disponiveis)
-        etapas = st.multiselect("Etapa", df["id_etapa"].unique(), default=df["id_etapa"].unique())
-        data_ini = st.date_input("Data inicial", df["data"].max().date() if not df.empty else datetime.now().date())
-        data_fim = st.date_input("Data final", df["data"].max().date() if not df.empty else datetime.now().date())
-    else:
-        st.warning("Nenhum dado encontrado")
-        proprietarios = []
-        etapas = []
-        data_ini = datetime.now().date()
-        data_fim = datetime.now().date()
-    
-    if not df_campanhas.empty:
-        campanhas_disponiveis = df_campanhas["nome_campanha"].tolist()
-        campanhas_selecionadas = st.multiselect(
-            "Campanhas",
-            options=campanhas_disponiveis,
-            default=df_campanhas[df_campanhas["status_campanha"] == True]["nome_campanha"].tolist(),
-            key="campanhas_filtro"
-        )
-        atualizar_status_campanhas(campanhas_selecionadas)
-    else:
-        campanhas_selecionadas = []
 
-# Filtrar dados
-if not df.empty:
+    proprietarios_disponiveis = df["proprietario"].unique().tolist()
     if not mostrar_gestao:
-        df = df[df["proprietario"] != "Gestão"]
-        df_original = df_original[df_original["proprietario"] != "Gestão"]
+        proprietarios_disponiveis = [p for p in proprietarios_disponiveis if p != "Gestão"]
 
-    df_filtrado = df.copy()
-    if proprietarios:
-        df_filtrado = df_filtrado[df_filtrado["proprietario"].isin(proprietarios)]
-    if etapas:
-        df_filtrado = df_filtrado[df_filtrado["id_etapa"].isin(etapas)]
-    df_filtrado = df_filtrado[
-        (df_filtrado["data"].dt.date >= data_ini) &
-        (df_filtrado["data"].dt.date <= data_fim)
-    ]
+    proprietarios = st.multiselect("Proprietário", options=proprietarios_disponiveis, default=proprietarios_disponiveis)
+    etapas = st.multiselect("Etapa", df["id_etapa"].unique(), default=df["id_etapa"].unique())
+    data_ini = st.date_input("Data inicial", df["data"].max().date())
+    data_fim = st.date_input("Data final", df["data"].max().date())
 
-    df_propostas = contar_propostas(df_filtrado, df_original)
-    total_adquiridas = df_propostas['quantidade_adquiridas'].sum() if not df_propostas.empty else 0
-    total_apresentadas = df_propostas['quantidade_apresentadas'].sum() if not df_propostas.empty else 0
-else:
-    df_propostas = pd.DataFrame()
-    total_adquiridas = 0
-    total_apresentadas = 0
+    campanhas_disponiveis = df_campanhas["nome_campanha"].tolist()
+    campanhas_selecionadas = st.multiselect(
+        "Campanhas",
+        options=campanhas_disponiveis,
+        default=df_campanhas[df_campanhas["status_campanha"] == True]["nome_campanha"].tolist(),
+        key="campanhas_filtro"
+    )
 
-# ---- Layout principal ----
-col2, col1 = st.columns([1, 3])
+atualizar_status_campanhas(campanhas_selecionadas)
+
+if not mostrar_gestao:
+    df = df[df["proprietario"] != "Gestão"]
+    df_original = df_original[df_original["proprietario"] != "Gestão"]
+
+df_filtrado = df.copy()
+if proprietarios:
+    df_filtrado = df_filtrado[df_filtrado["proprietario"].isin(proprietarios)]
+if etapas:
+    df_filtrado = df_filtrado[df_filtrado["id_etapa"].isin(etapas)]
+df_filtrado = df_filtrado[
+    (df_filtrado["data"].dt.date >= data_ini) &
+    (df_filtrado["data"].dt.date <= data_fim)
+]
+
+df_propostas = contar_propostas(df_filtrado, df_original)
+total_adquiridas = df_propostas['quantidade_adquiridas'].sum()
+total_apresentadas = df_propostas['quantidade_apresentadas'].sum()
+
+# Card de estatísticas removido conforme solicitado
+
+# ---- Visualizações principais ----
+col2, col1 = st.columns([1,3])
 
 with col1:
     medalha_b64 = image_to_base64("medalha.png")
-    
     if not df_propostas.empty:
         tabela_html = f"""
-        <div class="tabela-container">
-            <div class="glass-card fade-in-up" style="border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; overflow: hidden; margin: 10px 0;">
-                <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 1.8rem; margin: 15px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
-                    Propostas Diárias
-                </h3>
-                <table style="width: 100%; border-collapse: collapse; font-size: 1rem; background: #1a1a1a; border-radius: 8px; overflow: hidden;">
-                <thead>
-                    <tr style="border-bottom: 2px solid rgba(255, 215, 0, 0.6); background: #000000;">
-                        <th style="font-size: 1.2rem; text-align: left; background: #000000; color: #FFD700; padding: 15px 20px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3); font-weight: bold;">Nome</th>
-                        <th style="font-size: 1.2rem; text-align: center; background: #1A1A1A; color: #FFD700; padding: 15px 20px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3); font-weight: bold;">Adquiridas: {int(total_adquiridas)}/90</th>
-                        <th style="font-size: 1.2rem; text-align: center; background: #333333; color: #FFD700; padding: 15px 20px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3); font-weight: bold;">Apresentadas: {int(total_apresentadas)}/90</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div class="glass-card fade-in-up" style="border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; overflow: hidden; margin: 10px 0;">
+            <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 1.5rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
+            <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 2rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
+                Propostas Diárias
+            </h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; background: #1a1a1a; border-radius: 8px; overflow: hidden;">
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.3); background: #000000;">
+                    <th style="font-size: 1rem; text-align: left; background: #000000; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Nome</th>
+                    <th style="font-size: 1rem; text-align: center; background: #1A1A1A; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Adquiridas: {int(total_adquiridas)}/90</th>
+                    <th style="font-size: 1rem; text-align: center; background: #333333; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Apresentadas: {int(total_apresentadas)}/90</th>
+                </tr>
+            </thead>
+            <tbody>
         """
 
         maximo = 6
-        for i, (_, row) in enumerate(df_propostas.iterrows()):
+        for _, row in df_propostas.iterrows():
             nome = row['proprietario']
             valor1 = int(row['quantidade_adquiridas'])
             valor2 = int(row['quantidade_apresentadas'])
             medalha_html = f"""<img src="data:image/png;base64,{medalha_b64}" width="18" style="margin-left: 6px; vertical-align: middle;">""" \
                 if valor1 >= 6 or valor2 >= 6 else ""
-            
+
             proporcao1 = min(valor1 / maximo, 1.0)
             proporcao2 = min(valor2 / maximo, 1.0)
             cor_barra1 = get_cor_barra(valor1)
             cor_barra2 = get_cor_barra(valor2)
 
             barra1 = f"""
-            <div class="progress-bar" style='width: 100%; margin-bottom: 6px; border: 2px solid #FFD700; height: 18px;'>
+            <div class="progress-bar" style='width: 100%; height: 12px; margin-bottom: 4px; border: 2px solid #FFD700;'>
                 <div class="progress-fill" style='width: {proporcao1*100:.1f}%; {cor_barra1} height: 100%; border: 1px solid rgba(255, 215, 0, 0.6);'></div>
             </div>
-            <div style='text-align: center;'>
-                <span style='font-size: 1rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor1}/{maximo}</span>
-            </div>
+            <span style='font-size: 0.8rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor1}/{maximo}</span>
             """
 
             barra2 = f"""
-            <div class="progress-bar" style='width: 100%; margin-bottom: 6px; border: 2px solid #FFD700; height: 18px;'>
+            <div class="progress-bar" style='width: 100%; height: 12px; margin-bottom: 4px; border: 2px solid #FFD700;'>
                 <div class="progress-fill" style='width: {proporcao2*100:.1f}%; {cor_barra2} height: 100%; border: 1px solid rgba(255, 215, 0, 0.6);'></div>
             </div>
-            <div style='text-align: center;'>
-                <span style='font-size: 1rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor2}/{maximo}</span>
-            </div>
+            <span style='font-size: 0.8rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor2}/{maximo}</span>
             """
 
-            # Alternar cores das linhas
-            bg_color = "#2a2a2a" if i % 2 == 0 else "#1f1f1f"
-
             tabela_html += f"""
-            <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.2); background: {bg_color}; transition: background 0.3s ease;">
-                <td style="font-size: 1.1rem; background: #000000; padding: 15px 20px; color: #FFF; vertical-align: middle; text-align: left; text-shadow: 0 0 2px rgba(255, 255, 255, 0.3); font-weight: 500;">
+            <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.2); background: #2a2a2a;"> 
+                <td style="font-size: 1.5rem; background: #000000; padding: 6px 10px; color: #FFF; vertical-align: middle; text-align: left; text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);">
                     {nome} {medalha_html}
                 </td>
-                <td style="padding: 15px 20px; background: #1A1A1A; color: #FFD700; vertical-align: middle; text-align: center;">
+                <td style="padding: 6px 10px; background: #1A1A1A; color: #FFD700; vertical-align: middle; text-align: center; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);">
                     {barra1}
                 </td>
-                <td style="padding: 15px 20px; background: #333333; color: #FFD700; vertical-align: middle; text-align: center;">
+                <td style="padding: 6px 10px; background: #333333; color: #FFD700; vertical-align: middle; text-align: center; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);">
                     {barra2}
                 </td>
             </tr>
             """
 
-        tabela_html += """
-                </tbody>
-                </table>
-            </div>
-        </div>
-        """
-        st.components.v1.html(tabela_html, height=700, scrolling=True)
-    else:
-        st.warning("Nenhum dado de propostas encontrado para exibir.")
+        tabela_html += "</tbody></table></div>"
+        components.html(tabela_html, height=1000, scrolling=False)
+
 
 with col2:
     logo_b64 = image_to_base64("precs2.png")
-    sino_b64 = image_to_base64("sino.png")
-    
-    # Logo
-    if logo_b64:
-        st.markdown(f"""
-            <div class="glass-card slide-in-left" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 20px;"> 
-                <img src="data:image/png;base64,{logo_b64}" width="200" style="border-radius: 12px; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2); filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3));">
-            </div> 
-        """, unsafe_allow_html=True)
-    
-    # Cabeçalho com título
+    sino_b64 = image_to_base64("sino.png")  # Seu arquivo de sino
+
+    st.markdown(f"""
+        <div class="glass-card slide-in-left" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 20px;"> 
+            <img src="data:image/png;base64,{logo_b64}" width="200" style="border-radius: 12px; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2); filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3));">
+        </div> 
+    """, unsafe_allow_html=True)
+
+    # Cabeçalho com logo e título
     st.markdown(f"""
         <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 15px;">
             <h1 style="background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 2rem; margin: 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);">Precs Propostas</h1> 
@@ -575,33 +631,24 @@ with col2:
         </div>
     """, unsafe_allow_html=True)
 
-    # Título das campanhas
+    # Título das campanhas + sino
     st.markdown("""
         <div class="glass-card fade-in-up" style="text-align: center; margin-bottom: 15px;">
             <h2 style='background: linear-gradient(45deg, #D4AF37, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);'>Campanhas Ativas</h2>
         </div>
     """, unsafe_allow_html=True)
 
-    # Sino
-    if sino_b64:
-        st.markdown(f"""
-            <div class="glass-card fade-in-up" style='text-align: center; margin-bottom: 15px;'>
-                <img src="data:image/png;base64,{sino_b64}" width="100px;" style="filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4)); animation: pulse 2s ease-in-out infinite;">
-            </div>
-        """, unsafe_allow_html=True)
+    st.markdown(f"""
+        <div class="glass-card fade-in-up" style='text-align: center; margin-bottom: 15px;'>
+            <img src="data:image/png;base64,{sino_b64}" width="100px;" style="filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4)); animation: pulse 2s ease-in-out infinite;">
+        </div>
+    """, unsafe_allow_html=True)
 
     # Lista de campanhas
-    if not df_campanhas.empty:
-        campanhas_ativas = df_campanhas[df_campanhas["status_campanha"] == True]
-        for i, (_, campanha) in enumerate(campanhas_ativas.iterrows()):
-            st.markdown(f"""
-                <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 8px; padding: 12px; animation-delay: {i * 0.2}s;">
-                    <span style="font-size: 1.2rem; background: linear-gradient(45deg, #FFF, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);">{campanha['nome_campanha']}</span>
-                </div>
-            """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-            <div class="glass-card fade-in-up" style="text-align: center; margin-bottom: 8px; padding: 12px;">
-                <span style="font-size: 1rem; color: #FFD700;">Nenhuma campanha ativa</span>
+    campanhas_ativas = df_campanhas[df_campanhas["status_campanha"] == True]
+    for i, (_, campanha) in enumerate(campanhas_ativas.iterrows()):
+        st.markdown(f"""
+            <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 8px; padding: 12px; animation-delay: {i * 0.2}s;">
+                <span style="font-size: 1.2rem; background: linear-gradient(45deg, #FFF, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);">{campanha['nome_campanha']}</span>
             </div>
         """, unsafe_allow_html=True)
