@@ -12,348 +12,88 @@ import plotly.express as px
 import streamlit.components.v1 as components
 from datetime import datetime
 st.session_state.page_height = 900  # ou use st.window_height, futuramente
-# Configuração de locale removida para compatibilidade com Streamlit Cloud
-# import locale
-# try:
-#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-# except (locale.Error, OSError):
-#     try:
-#         locale.setlocale(locale.LC_TIME, 'pt_BR')
-#     except (locale.Error, OSError):
-#         pass
+import locale
+locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 # ---- Tela cheia + tema escuro da PRECS ----
 st.set_page_config(page_title="Precs Propostas", layout="wide")
 
-# Estilo elegante com tema escuro e dourado
+# Estilo personalizado com identidade visual PRECS (preto e dourado)
 st.markdown("""
     <style>
-    /* Reset e configurações gerais */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    /* Esconder header do Streamlit */
-    header {
-        visibility: hidden;
-    }
-    
-    /* Fundo escuro elegante */
+    header{
+            visibility: hidden;
+        }
     body {
-        background: #0a0a0a !important;
+        background-color: #0d0d0d;
         color: white;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        overflow-x: hidden;
     }
-    
-    /* Container principal */
     .main {
-        background: #0a0a0a !important;
-        padding: 0;
+        background-color: #0d0d0d;
     }
-    
+    h1, h2, h3, h4 {
+        color: #FFD700;
+    }
     .stApp {
-        background: #0a0a0a !important;
-        padding: 1rem;
+        background-color: #0d0d0d;
+        padding: 2rem;
         max-width: 100%;
     }
-    
-    /* Títulos com gradiente dourado */
-    h1, h2, h3, h4 {
-        background: linear-gradient(45deg, #FFD700, #FFA500);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    }
-    
-    /* Botões modernos */
     .stButton>button {
-        background: linear-gradient(45deg, #FFD700, #FFA500);
-        color: #000;
-        border-radius: 15px;
+        background-color: #FFD700;
+        color: black;
+        border-radius: 10px;
         border: none;
-        padding: 10px 20px;
-        font-weight: bold;
-        font-size: 14px;
-        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        transition: all 0.3s ease;
     }
-    
     .stButton>button:hover {
-        background: linear-gradient(45deg, #FFA500, #FFD700);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        background-color: #e6c200;
+        color: black;
     }
-    
-    /* Container principal */
     .block-container {
-        background: #1a1a1a;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 215, 0, 0.3);
-        padding: 1.5rem;
-        margin: 0.5rem 0;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        padding-top: 2rem;
+        padding-bottom: 2rem;
     }
-    
-    /* Sidebar estilizada */
     .css-1v0mbdj {
-        background: #1a1a1a !important;
+        background-color: #1a1a1a !important;
         color: white;
-        border-right: 2px solid #FFD700;
     }
-    
     .css-1d391kg {
-        background: #1a1a1a !important;
+        background-color: #1a1a1a !important;
     }
-    
-    /* DataFrames */
     .stDataFrame {
-        background: rgba(26, 26, 26, 0.9);
+        background-color: #1a1a1a;
         color: white;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 215, 0, 0.3);
     }
-    
-    /* Cards simples */
-    .glass-card {
-        background: #1a1a1a;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 215, 0, 0.3);
-        padding: 15px;
-        margin: 10px 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* Animações suaves */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
+
+    /* Responsividade */
+    @media screen and (max-width: 768px) {
+        html, body, [class*="css"] {
+            font-size: 12px !important;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+        h1, h2, h3, h4 {
+            font-size: 14px !important;
         }
-    }
-    
-    .fade-in-up {
-        animation: fadeInUp 0.6s ease-out;
-    }
-    
-    @keyframes slideInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    .slide-in-left {
-        animation: slideInLeft 0.8s ease-out;
-    }
-    
-    /* Scrollbar personalizada */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(45deg, #FFD700, #FFA500);
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(45deg, #FFA500, #FFD700);
-    }
-    
-    /* Responsividade otimizada para 100% de escala */
-    @media screen and (min-width: 1400px) {
-        .stApp {
-            padding: 1.5rem;
-        }
-        
-        .block-container {
-            padding: 2rem;
-        }
-        
-        .glass-card {
-            padding: 20px;
-        }
-        
-        h1 { font-size: 2.5rem !important; }
-        h2 { font-size: 2rem !important; }
-        h3 { font-size: 1.8rem !important; }
-        h4 { font-size: 1.3rem !important; }
-        
         table {
-            font-size: 0.9rem !important;
+            font-size: 10px !important;
         }
-        
         .stButton>button {
-            font-size: 0.9rem !important;
-            padding: 10px 20px !important;
+            font-size: 10px !important;
         }
-    }
-    
-    @media screen and (min-width: 1200px) and (max-width: 1399px) {
-        .stApp {
-            padding: 1rem;
+        img {
+            max-width: 80% !important;
         }
-        
-        .block-container {
-            padding: 1.5rem;
+        .tabela-container {
+            max-height: 60vh !important;
         }
-        
-        .glass-card {
-            padding: 18px;
-        }
-        
-        h1 { font-size: 2.2rem !important; }
-        h2 { font-size: 1.8rem !important; }
-        h3 { font-size: 1.5rem !important; }
-        h4 { font-size: 1.1rem !important; }
-        
-        table {
-            font-size: 0.85rem !important;
-        }
-        
-        .stButton>button {
-            font-size: 0.85rem !important;
-            padding: 8px 16px !important;
-        }
-    }
-    
-    @media screen and (max-width: 1199px) {
-        .stApp {
-            padding: 0.8rem;
-        }
-        
-        .block-container {
-            padding: 1.2rem;
-        }
-        
-        .glass-card {
-            padding: 15px;
-        }
-        
-        h1 { font-size: 2rem !important; }
-        h2 { font-size: 1.6rem !important; }
-        h3 { font-size: 1.3rem !important; }
-        h4 { font-size: 1rem !important; }
-        
-        table {
-            font-size: 0.8rem !important;
-        }
-        
-        .stButton>button {
-            font-size: 0.8rem !important;
-            padding: 8px 14px !important;
-        }
-    }
-    
-    /* Ajustes específicos para 100% de escala */
-    @media screen and (min-width: 1000px) {
         .stColumns {
+            flex-direction: column !important;
+        }
+    }
+    @media screen and (min-width: 769px) {
+        .stColumns {
+            display: flex !important;
             gap: 1rem !important;
         }
-        
-        .glass-card {
-            margin: 8px 0 !important;
-        }
-        
-        /* Reduzir tamanho das imagens */
-        img {
-            max-width: 100% !important;
-            height: auto !important;
-        }
-        
-        /* Ajustar altura da tabela */
-        .tabela-container {
-            max-height: 70vh !important;
-            overflow-y: auto !important;
-        }
-        
-        /* Otimizar espaçamentos */
-        .block-container {
-            margin: 0.5rem 0 !important;
-        }
-        
-        /* Reduzir padding dos cards */
-        .glass-card {
-            padding: 15px !important;
-        }
-        
-        /* Ajustar tamanho das fontes */
-        h1 { font-size: 2rem !important; }
-        h2 { font-size: 1.6rem !important; }
-        h3 { font-size: 1.4rem !important; }
-        h4 { font-size: 1.1rem !important; }
-        
-        /* Otimizar tabela */
-        table {
-            font-size: 0.85rem !important;
-        }
-        
-        /* Reduzir altura das barras de progresso */
-        .progress-bar {
-            height: 14px !important;
-        }
-    }
-    
-    /* Animação de pulse para o sino */
-    @keyframes pulse {
-        0%, 100% {
-            transform: scale(1);
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
-        }
-        50% {
-            transform: scale(1.5);
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-        }
-    }
-    
-    /* Barras de progresso contornadas */
-    .progress-bar {
-        background: #2C2C2C;
-        border-radius: 6px;
-        border: 2px solid #FFD700;
-        overflow: hidden;
-        position: relative;
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-        margin: 2px;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        border-radius: 4px;
-        transition: width 0.8s ease;
-        position: relative;
-        border: 1px solid rgba(255, 215, 0, 0.5);
-    }
-    
-    @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-    
-    /* Efeitos de brilho sutis */
-    .glow {
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-    }
-    
-    .glow:hover {
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -371,36 +111,6 @@ def image_to_base64(image_path):
     img.save(buffered, format="PNG")
     img_b64 = base64.b64encode(buffered.getvalue()).decode()
     return img_b64
-
-def formatar_data_pt_br():
-    """Formata a data atual em português brasileiro sem depender de locale"""
-    from datetime import datetime
-    hoje = datetime.now()
-
-    # Mapeamento de dias da semana
-    dias_semana = {
-        0: "Segunda-feira",
-        1: "Terça-feira", 
-        2: "Quarta-feira",
-        3: "Quinta-feira",
-        4: "Sexta-feira",
-        5: "Sábado",
-        6: "Domingo"
-    }
-
-    # Mapeamento de meses
-    meses = {
-        1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril",
-        5: "Maio", 6: "Junho", 7: "Julho", 8: "Agosto",
-        9: "Setembro", 10: "Outubro", 11: "Novembro", 12: "Dezembro"
-    }
-
-    dia_semana = dias_semana[hoje.weekday()]
-    dia = hoje.day
-    mes = meses[hoje.month]
-    ano = hoje.year
-
-    return f"{dia_semana} - {dia:02d}/{hoje.month:02d}/{ano}"
 
 # ---- Carrega variáveis do .env ----
 load_dotenv()
@@ -479,7 +189,7 @@ def contar_propostas(df, df_original):
     # Garante todos os proprietários no resultado final
     df_adquiridas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_adquiridas, on='proprietario', how='left').fillna(0)
-
+    
     df_apresentadas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_apresentadas, on='proprietario', how='left').fillna(0)
 
@@ -488,8 +198,8 @@ def contar_propostas(df, df_original):
 
 def get_cor_barra(valor, maximo=6):
     if valor >= maximo:
-        return "background: linear-gradient(45deg, #FFD700, #FFA500); box-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.2);"
-    return "background: linear-gradient(45deg, #c3a43e, #d4af37); box-shadow: 0 0 5px rgba(195, 164, 62, 0.4);"
+        return "background-color: #FFD700; box-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px #FFD700;"
+    return "background-color: #c3a43e;"
 
 
 
@@ -501,16 +211,16 @@ df_campanhas = carregar_dados_campanhas()
 with st.sidebar:
     st.header("Filtros")
     mostrar_gestao = st.checkbox("Mostrar proprietário 'Gestão'", value=False)
-
+    
     proprietarios_disponiveis = df["proprietario"].unique().tolist()
     if not mostrar_gestao:
         proprietarios_disponiveis = [p for p in proprietarios_disponiveis if p != "Gestão"]
-
+    
     proprietarios = st.multiselect("Proprietário", options=proprietarios_disponiveis, default=proprietarios_disponiveis)
     etapas = st.multiselect("Etapa", df["id_etapa"].unique(), default=df["id_etapa"].unique())
     data_ini = st.date_input("Data inicial", df["data"].max().date())
     data_fim = st.date_input("Data final", df["data"].max().date())
-
+    
     campanhas_disponiveis = df_campanhas["nome_campanha"].tolist()
     campanhas_selecionadas = st.multiselect(
         "Campanhas",
@@ -539,7 +249,8 @@ df_propostas = contar_propostas(df_filtrado, df_original)
 total_adquiridas = df_propostas['quantidade_adquiridas'].sum()
 total_apresentadas = df_propostas['quantidade_apresentadas'].sum()
 
-# Card de estatísticas removido conforme solicitado
+# ---- Total de propostas ----
+#st.markdown(f"<p style='text-align:center; font-size:16px; color:#C5A45A; font-weight: bold;'>{int(total_adquiridas)} adquiridas | {int(total_apresentadas)} apresentadas</p>", unsafe_allow_html=True)
 
 # ---- Visualizações principais ----
 col2, col1 = st.columns([1,3])
@@ -548,18 +259,16 @@ with col1:
     medalha_b64 = image_to_base64("medalha.png")
     if not df_propostas.empty:
         tabela_html = f"""
-        <div class="glass-card fade-in-up" style="border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; overflow: hidden; margin: 10px 0;">
-            <h3 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 2rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
-            <h2 style='background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; font-size: 2rem; margin: 10px 0; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);'>
+        <div style=" border: 2px solid #C5A45A ">
+            <h3 style='color: #D4AF37 !important; text-align: center; font-size: 40px; margin-top: 5px; margin-bottom: 5px;'>
                 Propostas Diárias
             </h3>
-            </h2>
-            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; background: #1a1a1a; border-radius: 8px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
             <thead>
-                <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.3); background: #000000;">
-                    <th style="font-size: 1rem; text-align: left; background: #000000; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Nome</th>
-                    <th style="font-size: 1rem; text-align: center; background: #1A1A1A; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Adquiridas: {int(total_adquiridas)}/90</th>
-                    <th style="font-size: 1rem; text-align: center; background: #333333; color: #FFD700; padding: 8px 12px; text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);">Apresentadas: {int(total_apresentadas)}/90</th>
+                <tr style="border-bottom: 2px solid #C5A45A;">
+                    <th style="font-size: 25px; text-align: left; background-color: #000000; color: #C5A45A; padding: 10px;">Nome</th>
+                    <th style="font-size: 25px; text-align: center; background-color: #1A1A1A; color: #C5A45A; padding: 10px;">Adquiridas: {int(total_adquiridas)}/90</th>
+                    <th style="font-size: 25px; text-align: center; background-color: #333333; color: #C5A45A; padding: 10px;">Apresentadas: {int(total_apresentadas)}/90</th>
                 </tr>
             </thead>
             <tbody>
@@ -570,86 +279,82 @@ with col1:
             nome = row['proprietario']
             valor1 = int(row['quantidade_adquiridas'])
             valor2 = int(row['quantidade_apresentadas'])
-            medalha_html = f"""<img src="data:image/png;base64,{medalha_b64}" width="18" style="margin-left: 6px; vertical-align: middle;">""" \
+            medalha_html = f"""<img src="data:image/png;base64,{medalha_b64}" width="25" style="margin-left: 10px; vertical-align: middle;">""" \
                 if valor1 >= 6 or valor2 >= 6 else ""
-
+            
             proporcao1 = min(valor1 / maximo, 1.0)
             proporcao2 = min(valor2 / maximo, 1.0)
             cor_barra1 = get_cor_barra(valor1)
             cor_barra2 = get_cor_barra(valor2)
 
             barra1 = f"""
-            <div class="progress-bar" style='width: 100%; height: 12px; margin-bottom: 4px; border: 2px solid #FFD700;'>
-                <div class="progress-fill" style='width: {proporcao1*100:.1f}%; {cor_barra1} height: 100%; border: 1px solid rgba(255, 215, 0, 0.6);'></div>
+            <div style='background-color: #2C2C2C; width: 100%; height: 15px; border-radius: 6px; border: 2px solid #D4AF37;'>
+                <div style='width: {proporcao1*100:.1f}%; {cor_barra1} height: 100%; border-radius: 4px;'></div>
             </div>
-            <span style='font-size: 0.8rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor1}/{maximo}</span>
+            <span style='font-size: 12px; color: #ccc;'>{valor1}/{maximo}</span>
             """
 
             barra2 = f"""
-            <div class="progress-bar" style='width: 100%; height: 12px; margin-bottom: 4px; border: 2px solid #FFD700;'>
-                <div class="progress-fill" style='width: {proporcao2*100:.1f}%; {cor_barra2} height: 100%; border: 1px solid rgba(255, 215, 0, 0.6);'></div>
+            <div style='background-color: #2C2C2C; width: 100%; height: 15px; border-radius: 6px; border: 2px solid #D4AF37;'>
+                <div style='width: {proporcao2*100:.1f}%; {cor_barra2} height: 100%; border-radius: 4px;'></div>
             </div>
-            <span style='font-size: 0.8rem; color: #FFD700; font-weight: bold; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);'>{valor2}/{maximo}</span>
+            <span style='font-size: 12px; color: #ccc;'>{valor2}/{maximo}</span>
             """
 
             tabela_html += f"""
-            <tr style="border-bottom: 1px solid rgba(255, 215, 0, 0.2); background: #2a2a2a;">
-                <td style="font-size: 1.5rem; background: #000000; padding: 6px 10px; color: #FFF; vertical-align: middle; text-align: left; text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);">
+            <tr style="border-bottom: 1px solid #FFD700;"> <!-- dourado -->
+                <td style="font-size: 25px; background-color: #000000; padding: 10px 12px; color: #FFF; vertical-align: middle; text-align: left;">
                     {nome} {medalha_html}
                 </td>
-                <td style="padding: 6px 10px; background: #1A1A1A; color: #FFD700; vertical-align: middle; text-align: center; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);">
+                <td style="padding: 10px 12px; background-color: #1A1A1A; color: #FFD700; vertical-align: middle; text-align: center;">
                     {barra1}
                 </td>
-                <td style="padding: 6px 10px; background: #333333; color: #FFD700; vertical-align: middle; text-align: center; text-shadow: 0 0 2px rgba(255, 215, 0, 0.3);">
+                <td style="padding: 10px 12px; background-color: #333333; color: #FFD700; vertical-align: middle; text-align: center;">
                     {barra2}
                 </td>
             </tr>
             """
 
         tabela_html += "</tbody></table></div>"
-        components.html(tabela_html, height=1000, scrolling=False)
+        components.html(tabela_html, height=2000, scrolling=False)
 
 
 with col2:
     logo_b64 = image_to_base64("precs2.png")
     sino_b64 = image_to_base64("sino.png")  # Seu arquivo de sino
-
+    
     st.markdown(f"""
-        <div class="glass-card slide-in-left" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 20px;"> 
-            <img src="data:image/png;base64,{logo_b64}" width="200" style="border-radius: 12px; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2); filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3));">
+        <div style="display: flex; justify-content: center; align-items: center; text-align: center;"> 
+            <img src="data:image/png;base64,{logo_b64}" width="300" style="border-radius: 12px;">
         </div> 
     """, unsafe_allow_html=True)
-
+    
     # Cabeçalho com logo e título
-    st.markdown(f""" 
-        <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 15px;"> 
-            <h1 style="background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 2.5rem; margin: 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);">Precs Propostas</h1> 
+    st.markdown(f"""
+        <div style="display: flex; justify-content: center; align-items: center; text-align: center;">
+            <h1 style="font-size: 45px; color: #D4AF37; margin: 0;">Precs Propostas</h1> 
         </div>
-        <div class="glass-card fade-in-up" style="text-align: center; margin-bottom: 15px;">
-            <h3 style='background: linear-gradient(45deg, #C5A45A, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1rem; font-weight: bold; text-shadow: 0 0 8px rgba(197, 164, 90, 0.3);'>
-                {formatar_data_pt_br()}
-            </h3>
-        </div>
+        <h3 style='font-size: 25px; color: #C5A45A; font-weight: bold; text-align: center;'>
+            Segunda-feira - 28/07/2025
+        </h3>
     """, unsafe_allow_html=True)
 
     # Título das campanhas + sino
     st.markdown("""
-        <div class="glass-card fade-in-up" style="text-align: center; margin-bottom: 15px;">
-            <h2 style='background: linear-gradient(45deg, #D4AF37, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);'>Campanhas Ativas</h2>
-        </div>
+        <h2 style='text-align: center; color: #D4AF37; margin-bottom: 10px;'>Campanhas Ativas</h2>
     """, unsafe_allow_html=True)
 
     st.markdown(f"""
-        <div class="glass-card fade-in-up" style='text-align: center; margin-bottom: 15px;'>
-            <img src="data:image/png;base64,{sino_b64}" width="100px;" style="filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4)); animation: pulse 2s ease-in-out infinite;">
+        <div style='text-align: center; margin-bottom: 80px;'>
+            <img src="data:image/png;base64,{sino_b64}" width="150px;">
         </div>
     """, unsafe_allow_html=True)
 
     # Lista de campanhas
     campanhas_ativas = df_campanhas[df_campanhas["status_campanha"] == True]
-    for i, (_, campanha) in enumerate(campanhas_ativas.iterrows()):
+    for _, campanha in campanhas_ativas.iterrows():
         st.markdown(f"""
-            <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 8px; padding: 12px; animation-delay: {i * 0.2}s;">
-                <span style="font-size: 1.2rem; background: linear-gradient(45deg, #FFF, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);">{campanha['nome_campanha']}</span>
+            <div style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 10px;">
+                <span style="font-size: 40px; color: #FFF;">{campanha['nome_campanha']}</span>
             </div>
         """, unsafe_allow_html=True)
