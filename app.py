@@ -12,8 +12,6 @@ import plotly.express as px
 import streamlit.components.v1 as components
 from datetime import datetime
 st.session_state.page_height = 900  # ou use st.window_height, futuramente
-import locale
-locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 # Configuração de locale removida para compatibilidade com Streamlit Cloud
 # import locale
 # try:
@@ -481,7 +479,7 @@ def contar_propostas(df, df_original):
     # Garante todos os proprietários no resultado final
     df_adquiridas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_adquiridas, on='proprietario', how='left').fillna(0)
-
+    
     df_apresentadas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_apresentadas, on='proprietario', how='left').fillna(0)
 
@@ -503,16 +501,16 @@ df_campanhas = carregar_dados_campanhas()
 with st.sidebar:
     st.header("Filtros")
     mostrar_gestao = st.checkbox("Mostrar proprietário 'Gestão'", value=False)
-
+    
     proprietarios_disponiveis = df["proprietario"].unique().tolist()
     if not mostrar_gestao:
         proprietarios_disponiveis = [p for p in proprietarios_disponiveis if p != "Gestão"]
-
+    
     proprietarios = st.multiselect("Proprietário", options=proprietarios_disponiveis, default=proprietarios_disponiveis)
     etapas = st.multiselect("Etapa", df["id_etapa"].unique(), default=df["id_etapa"].unique())
     data_ini = st.date_input("Data inicial", df["data"].max().date())
     data_fim = st.date_input("Data final", df["data"].max().date())
-
+    
     campanhas_disponiveis = df_campanhas["nome_campanha"].tolist()
     campanhas_selecionadas = st.multiselect(
         "Campanhas",
@@ -572,7 +570,7 @@ with col1:
             valor2 = int(row['quantidade_apresentadas'])
             medalha_html = f"""<img src="data:image/png;base64,{medalha_b64}" width="18" style="margin-left: 6px; vertical-align: middle;">""" \
                 if valor1 >= 6 or valor2 >= 6 else ""
-
+            
             proporcao1 = min(valor1 / maximo, 1.0)
             proporcao2 = min(valor2 / maximo, 1.0)
             cor_barra1 = get_cor_barra(valor1)
@@ -613,13 +611,13 @@ with col1:
 with col2:
     logo_b64 = image_to_base64("precs2.png")
     sino_b64 = image_to_base64("sino.png")  # Seu arquivo de sino
-
+    
     st.markdown(f"""
         <div class="glass-card slide-in-left" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 20px;"> 
             <img src="data:image/png;base64,{logo_b64}" width="200" style="border-radius: 12px; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2); filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3));">
         </div> 
     """, unsafe_allow_html=True)
-
+    
     # Cabeçalho com logo e título
     st.markdown(f"""
         <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 15px;">
@@ -627,7 +625,6 @@ with col2:
         </div>
         <div class="glass-card fade-in-up" style="text-align: center; margin-bottom: 15px;">
             <h3 style='background: linear-gradient(45deg, #C5A45A, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1rem; font-weight: bold; text-shadow: 0 0 8px rgba(197, 164, 90, 0.3);'>
-                Segunda-feira - 28/07/2025
                 {formatar_data_pt_br()}
             </h3>
         </div>
@@ -653,3 +650,4 @@ with col2:
             <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 8px; padding: 12px; animation-delay: {i * 0.2}s;">
                 <span style="font-size: 1.2rem; background: linear-gradient(45deg, #FFF, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);">{campanha['nome_campanha']}</span>
             </div>
+        """, unsafe_allow_html=True)
