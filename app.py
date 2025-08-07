@@ -12,15 +12,8 @@ import plotly.express as px
 import streamlit.components.v1 as components
 from datetime import datetime
 st.session_state.page_height = 900  # ou use st.window_height, futuramente
-# Configuração de locale removida para compatibilidade com Streamlit Cloud
-# import locale
-# try:
-#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-# except (locale.Error, OSError):
-#     try:
-#         locale.setlocale(locale.LC_TIME, 'pt_BR')
-#     except (locale.Error, OSError):
-#         pass
+import locale
+locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 # ---- Tela cheia + tema escuro da PRECS ----
 st.set_page_config(page_title="Precs Propostas", layout="wide")
@@ -319,7 +312,6 @@ st.markdown("""
         }
         50% {
             transform: scale(1.03);
-            transform: scale(1.5);
             filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
         }
     }
@@ -372,36 +364,6 @@ def image_to_base64(image_path):
     img.save(buffered, format="PNG")
     img_b64 = base64.b64encode(buffered.getvalue()).decode()
     return img_b64
-
-def formatar_data_pt_br():
-    """Formata a data atual em português brasileiro sem depender de locale"""
-    from datetime import datetime
-    hoje = datetime.now()
-
-    # Mapeamento de dias da semana
-    dias_semana = {
-        0: "Segunda-feira",
-        1: "Terça-feira", 
-        2: "Quarta-feira",
-        3: "Quinta-feira",
-        4: "Sexta-feira",
-        5: "Sábado",
-        6: "Domingo"
-    }
-
-    # Mapeamento de meses
-    meses = {
-        1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril",
-        5: "Maio", 6: "Junho", 7: "Julho", 8: "Agosto",
-        9: "Setembro", 10: "Outubro", 11: "Novembro", 12: "Dezembro"
-    }
-
-    dia_semana = dias_semana[hoje.weekday()]
-    dia = hoje.day
-    mes = meses[hoje.month]
-    ano = hoje.year
-
-    return f"{dia_semana} - {dia:02d}/{hoje.month:02d}/{ano}"
 
 # ---- Carrega variáveis do .env ----
 load_dotenv()
@@ -480,7 +442,7 @@ def contar_propostas(df, df_original):
     # Garante todos os proprietários no resultado final
     df_adquiridas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_adquiridas, on='proprietario', how='left').fillna(0)
-
+    
     df_apresentadas_full = pd.DataFrame({'proprietario': all_proprietarios}) \
         .merge(df_apresentadas, on='proprietario', how='left').fillna(0)
 
@@ -502,16 +464,16 @@ df_campanhas = carregar_dados_campanhas()
 with st.sidebar:
     st.header("Filtros")
     mostrar_gestao = st.checkbox("Mostrar proprietário 'Gestão'", value=False)
-
+    
     proprietarios_disponiveis = df["proprietario"].unique().tolist()
     if not mostrar_gestao:
         proprietarios_disponiveis = [p for p in proprietarios_disponiveis if p != "Gestão"]
-
+    
     proprietarios = st.multiselect("Proprietário", options=proprietarios_disponiveis, default=proprietarios_disponiveis)
     etapas = st.multiselect("Etapa", df["id_etapa"].unique(), default=df["id_etapa"].unique())
     data_ini = st.date_input("Data inicial", df["data"].max().date())
     data_fim = st.date_input("Data final", df["data"].max().date())
-
+    
     campanhas_disponiveis = df_campanhas["nome_campanha"].tolist()
     campanhas_selecionadas = st.multiselect(
         "Campanhas",
@@ -571,7 +533,7 @@ with col1:
             valor2 = int(row['quantidade_apresentadas'])
             medalha_html = f"""<img src="data:image/png;base64,{medalha_b64}" width="18" style="margin-left: 6px; vertical-align: middle;">""" \
                 if valor1 >= 6 or valor2 >= 6 else ""
-
+            
             proporcao1 = min(valor1 / maximo, 1.0)
             proporcao2 = min(valor2 / maximo, 1.0)
             cor_barra1 = get_cor_barra(valor1)
@@ -612,13 +574,13 @@ with col1:
 with col2:
     logo_b64 = image_to_base64("precs2.png")
     sino_b64 = image_to_base64("sino.png")  # Seu arquivo de sino
-
+    
     st.markdown(f"""
         <div class="glass-card slide-in-left" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 20px;"> 
             <img src="data:image/png;base64,{logo_b64}" width="200" style="border-radius: 12px; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2); filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3));">
         </div> 
     """, unsafe_allow_html=True)
-
+    
     # Cabeçalho com logo e título
     st.markdown(f"""
         <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 15px;">
@@ -626,7 +588,7 @@ with col2:
         </div>
         <div class="glass-card fade-in-up" style="text-align: center; margin-bottom: 15px;">
             <h3 style='background: linear-gradient(45deg, #C5A45A, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1rem; font-weight: bold; text-shadow: 0 0 8px rgba(197, 164, 90, 0.3);'>
-                {formatar_data_pt_br()}
+                Segunda-feira - 28/07/2025
             </h3>
         </div>
     """, unsafe_allow_html=True)
