@@ -621,9 +621,7 @@ with col2:
     """, unsafe_allow_html=True)
 
     # Cabeçalho com logo e título
-    st.markdown(f"""
-        <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 15px;">
-            <h1 style="background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 2rem; margin: 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);">Precs Propostas</h1> 
+    st.markdown(f""" 
         <div class="glass-card fade-in-up" style="display: flex; justify-content: center; align-items: center; text-align: center; margin-bottom: 15px;"> 
             <h1 style="background: linear-gradient(45deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 2.5rem; margin: 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);">Precs Propostas</h1> 
         </div>
