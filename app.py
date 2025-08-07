@@ -542,7 +542,7 @@ total_apresentadas = df_propostas['quantidade_apresentadas'].sum()
 # Card de estatísticas removido conforme solicitado
 
 # ---- Visualizações principais ----
-col2, col1 = st.columns([1,3])
+col2, col1 = st.columns([1,1])
 
 with col1:
     medalha_b64 = image_to_base64("medalha.png")
