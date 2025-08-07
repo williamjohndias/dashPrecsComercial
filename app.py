@@ -121,7 +121,6 @@ st.markdown("""
     .glass-card {
         background: #1a1a1a;
         border-radius: 12px;
-        
         border: 1px solid rgba(255, 215, 0, 0.3);
         padding: 15px;
         margin: 10px 0;
@@ -319,6 +318,7 @@ st.markdown("""
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
         }
         50% {
+            transform: scale(1.03);
             transform: scale(1.5);
             filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
         }
